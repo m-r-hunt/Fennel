@@ -1602,9 +1602,9 @@ local function dofile_fennel(filename, options, ...)
     if options.allowedGlobals == nil then
         options.allowedGlobals = currentGlobalNames(options.env)
     end
-    local f = assert(io.open(filename, "rb"))
-    local source = f:read("*all")
-    f:close()
+--    local f = assert(io.open(filename, "rb"))
+    local source = love.filesystem.read(filename)
+--    f:close()
     options.filename = options.filename or filename
     return eval(source, options, ...)
 end
@@ -1725,17 +1725,17 @@ local module = {
     repl = repl,
     dofile = dofile_fennel,
     macroLoaded = macroLoaded,
-    path = "./?.fnl;./?/init.fnl",
+    path = "?.fnl;./?/init.fnl",
     traceback = traceback
 }
 
 local function searchModule(modulename)
     modulename = modulename:gsub("%.", "/")
     for path in string.gmatch(module.path..";", "([^;]*);") do
-        local filename = path:gsub("%?", modulename)
-        local file = io.open(filename, "rb")
+      local filename = path:gsub("%?", modulename)
+        local file = love.filesystem.getInfo(filename)
         if(file) then
-            file:close()
+            --file:close()
             return filename
         end
     end
